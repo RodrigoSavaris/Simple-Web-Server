@@ -7,44 +7,70 @@ import java.nio.file.Files;
 
 public class Server {
 
-    private int myPort = 9073;
+    private final int myPort = 9073;
+
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    private BufferedReader bReader;
+
     private String request;
     private String parsedRequest;
-    private File file;
-    private OutputStream outputStream;
-    private BufferedWriter bufferedWriter;
-    private double fileSize;
-    private FileInputStream fileInputStream;
-    private FileOutputStream fileOutputStream;
-    private String fileExtension;
+
+    private boolean serverLive;
 
     public Server(){
 
-        try {
+        serverLive = true;
 
+        try {
             serverSocket = new ServerSocket(myPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        while (serverLive) {
+            try {
+
+                clientSocket = serverSocket.accept();
+
+                serverProcess();
+
+            } catch (IOException e) {
+
+                e.getMessage();
+
+            }
+        }
+    }
+
+    public void serverProcess(){
+
+        //I tried a while loop here.
+
+        /*try {
+
+            //serverSocket = new ServerSocket(myPort);
             clientSocket = serverSocket.accept();
 
-            requestReader();
-            parseRequest();
-            respond(parsedRequest);
-
         } catch (IOException e){
-
             e.getMessage();
+        }*/
 
+        request = null;
+        requestReader();
+        parseRequest();
+        if ( request != null) {
+            respond(parsedRequest);
         }
+
     }
 
     public void requestReader() {
 
         try {
 
-            bReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             request = bReader.readLine();
+            //close(bReader);
             System.out.println("Initial request: "+request);
 
         } catch (IOException e) {
@@ -53,7 +79,7 @@ public class Server {
     }
 
     public void parseRequest(){
-
+        //array low
         parsedRequest = request.split(" ")[1];
 
         System.out.println("Parsed request: "+parsedRequest);
@@ -67,17 +93,22 @@ public class Server {
     }
 
     private void respond(String clientRequest) {
+        System.out.println("the loop got here");
+        File file = new File("www"+clientRequest);
 
-        file = new File("www"+clientRequest);
+        if (!file.exists()) {
+            System.out.println("didnt find it");
+            return;
+        }
+
         System.out.println("The selected file is "+file.toString());
-        fileExtension  = parsedRequest.split("\\.")[parsedRequest.split("\\.").length-1];
-        System.out.println(fileExtension);
+        String fileExtension  = parsedRequest.split("\\.")[parsedRequest.split("\\.").length-1];
+        System.out.println("The extension is: "+fileExtension);
 
-        fileSize = file.length();
+        double fileSize = file.length();
 
         try {
-            fileInputStream = new FileInputStream(file);
-            outputStream = clientSocket.getOutputStream();
+            OutputStream outputStream = clientSocket.getOutputStream();
 
             outputStream.write("HTTP/1.0 200 Document Follows\r\n".getBytes());
             switch (fileExtension) {
@@ -87,11 +118,19 @@ public class Server {
                     break;
 
                 case "jpeg":
-                    outputStream.write("Content-Type: image/jpeg \\r\\n".getBytes());
+                    outputStream.write("Content-Type: image/jpeg \r\n".getBytes());
+                    break;
+
+                case "jpg":
+                    outputStream.write("Content-Type: image/jpg \r\n".getBytes());
+                    break;
+
+                case "png":
+                    outputStream.write("Content-Type: image/png \r\n".getBytes());
                     break;
 
                 case "gif":
-                    outputStream.write("Content-Type: image/gif \\r\\n".getBytes());
+                    outputStream.write("Content-Type: image/gif \r\n".getBytes());
                     break;
             }
 
@@ -102,11 +141,16 @@ public class Server {
 
             outputStream.write(fileData);
 
+            close(outputStream);
+
         } catch (FileNotFoundException e){
             e.getMessage();
         } catch (IOException e){
             e.getMessage();
         }
+
+
+
 
     }
 
