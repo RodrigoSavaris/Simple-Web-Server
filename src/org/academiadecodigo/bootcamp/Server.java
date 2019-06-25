@@ -93,12 +93,11 @@ public class Server {
     }
 
     private void respond(String clientRequest) {
-        System.out.println("the loop got here");
+
         File file = new File("www"+clientRequest);
 
         if (!file.exists()) {
-            System.out.println("didnt find it");
-            return;
+            file = new File("www/NotFound.html");
         }
 
         System.out.println("The selected file is "+file.toString());
