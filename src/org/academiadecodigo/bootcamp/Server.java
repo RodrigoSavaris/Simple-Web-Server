@@ -44,20 +44,10 @@ public class Server {
 
     public void serverProcess(){
 
-        //I tried a while loop here.
-
-        /*try {
-
-            //serverSocket = new ServerSocket(myPort);
-            clientSocket = serverSocket.accept();
-
-        } catch (IOException e){
-            e.getMessage();
-        }*/
-
         request = null;
         requestReader();
         parseRequest();
+
         if ( request != null) {
             respond(parsedRequest);
         }
@@ -70,7 +60,6 @@ public class Server {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             request = bReader.readLine();
-            //close(bReader);
             System.out.println("Initial request: "+request);
 
         } catch (IOException e) {
