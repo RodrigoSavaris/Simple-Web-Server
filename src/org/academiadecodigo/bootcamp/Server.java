@@ -89,6 +89,10 @@ public class Server {
                 case "jpeg":
                     outputStream.write("Content-Type: image/jpeg \\r\\n".getBytes());
                     break;
+
+                case "gif":
+                    outputStream.write("Content-Type: image/gif \\r\\n".getBytes());
+                    break;
             }
 
             outputStream.write(("Content-Length: "+fileSize+" \r\n").getBytes());
