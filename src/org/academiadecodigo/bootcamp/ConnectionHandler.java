@@ -17,45 +17,19 @@ public class ConnectionHandler implements Runnable{
 
     private boolean serverLive;
 
-    public ConnectionHandler(int whichPort){
-
-        serverLive = true;
-
-        try {
-            serverSocket = new ServerSocket(myPort);
-
-            while (serverLive) {
-
-                clientSocket = serverSocket.accept();
-                this.run();
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        /*while (serverLive) {
-            try {
-
-                clientSocket = serverSocket.accept();
-
-                request = null;
-                request = ConnectionHandler.requestReader(clientSocket);
-                parsedRequest = ConnectionHandler.parseRequest(request);
-
-                if ( request != null ) {
-                    ConnectionHandler.respond(parsedRequest, parsedRequest, clientSocket);
-                }
-
-            } catch (IOException e) {
-                e.getMessage();
-            }
-        }*/
+    public ConnectionHandler(boolean serverLive, ServerSocket serverSocket, Socket clientSocket){
+        this.serverLive = serverLive;
+        this.serverSocket=serverSocket;
+        this.clientSocket = clientSocket;
     }
+
+
+
 
     @Override
     public void run() {
 
+        System.out.println(Thread.currentThread().getName());
         request = null;
         request = ConnectionHandler.requestReader(clientSocket);
         parsedRequest = ConnectionHandler.parseRequest(request);
