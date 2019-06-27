@@ -43,13 +43,13 @@ public class ConnectionHandler implements Runnable{
 
     public static String requestReader(Socket clientSocket){
 
-        System.out.println("Checking threads: "+Thread.currentThread().getName());
+        //System.out.println("Checking threads: "+Thread.currentThread().getName());
 
         try {
 
             BufferedReader bReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             String request = bReader.readLine();
-            System.out.println("Initial request: "+request);
+            //System.out.println("Initial request: "+request);
             return request;
 
         } catch (IOException e) {
@@ -63,12 +63,12 @@ public class ConnectionHandler implements Runnable{
 
         String parsedRequest = request.split(" ")[1];
 
-        System.out.println("Parsed request: "+parsedRequest);
+        //System.out.println("Parsed request: "+parsedRequest);
 
         if (parsedRequest.equals("/")) {
             parsedRequest = "/index.html";
         }
-        System.out.println("The final request form is: "+parsedRequest);
+        //System.out.println("The final request form is: "+parsedRequest);
 
         return parsedRequest;
 
@@ -82,9 +82,9 @@ public class ConnectionHandler implements Runnable{
             file = new File("www/NotFound.html");
         }
 
-        System.out.println("The selected file is "+file.toString());
+        //System.out.println("The selected file is "+file.toString());
         String fileExtension  = parsedRequest.split("\\.")[parsedRequest.split("\\.").length-1];
-        System.out.println("The extension is: "+fileExtension);
+        //System.out.println("The extension is: "+fileExtension);
 
         double fileSize = file.length();
 

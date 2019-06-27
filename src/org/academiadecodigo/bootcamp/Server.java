@@ -3,6 +3,9 @@ package org.academiadecodigo.bootcamp;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
 
@@ -14,13 +17,7 @@ public class Server {
 
     public Server(){
 
-            //Thread thread = new Thread(new ConnectionHandler(myPort));
-            //thread.start();
-
         createServer(myPort);
-        while (true) {
-            waitingConnection();
-        }
 
     }
 
@@ -29,43 +26,22 @@ public class Server {
 
             serverLive = true;
 
+        ExecutorService fixedPool = Executors.newFixedThreadPool(20);
+
+
             try {
+
                 serverSocket = new ServerSocket(myPort);
 
                 while (serverLive) {
 
                     clientSocket = serverSocket.accept();
-                    Thread thread = new Thread(new ConnectionHandler(serverLive,serverSocket,clientSocket));
-                    thread.start();
+                    fixedPool.submit(new ConnectionHandler(serverLive,serverSocket,clientSocket));
 
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-        /*while (serverLive) {
-            try {
-
-                clientSocket = serverSocket.accept();
-
-                request = null;
-                request = ConnectionHandler.requestReader(clientSocket);
-                parsedRequest = ConnectionHandler.parseRequest(request);
-
-                if ( request != null ) {
-                    ConnectionHandler.respond(parsedRequest, parsedRequest, clientSocket);
-                }
-
-            } catch (IOException e) {
-                e.getMessage();
-            }
-        }*/
-
     }
-
-    private void waitingConnection() {
-
-    }
-
-
 }
